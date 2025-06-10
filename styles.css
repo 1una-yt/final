@@ -90,19 +90,20 @@ body {
     cursor: pointer;
     font-size: 12px;
     transition: all 0.3s ease;
+    color: #333;
 }
 
 .lang-btn.active {
-    background: var(--primary-color);
-    color: white;
+    background: var(--primary-color) !important;
+    color: white !important;
 }
 
-.lang-btn:hover {
+.lang-btn:hover:not(.active) {
     background: var(--light-gray);
 }
 
-.lang-btn.active:hover {
-    background: var(--primary-color);
+.lang-btn:focus {
+    outline: none;
 }
 
 /* 網路狀態指示器 */

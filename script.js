@@ -4,7 +4,6 @@ const translations = {
         'title': '拓元售票系統 - 系統維護中',
         'main.title': '系統繁忙中，請稍候重試',
         'main.status': '目前有大量用戶同時訪問，系統正在全力處理請求',
-        'info.refresh_time': '自動刷新時間：',
         'info.data_saved': '購票資訊已暫存在系統',
         'info.customer_service': '線上客服：',
         'info.contact_service': '聯絡客服',
@@ -23,40 +22,14 @@ const translations = {
         'network.offline': '連線中斷',
         'network.reconnecting': '重新連線中',
         'network.offline_warning': '⚠️ 網路連線中斷，正在嘗試重新連線...',
-        'refresh_time_suffix': '秒後',
-        'minutes': '分鐘'
-    },
-    'zh-CN': {
-        'title': '拓元售票系统 - 系统维护中',
-        'main.title': '系统繁忙中，请稍候重试',
-        'main.status': '目前有大量用户同时访问，系统正在全力处理请求',
-        'info.refresh_time': '自动刷新时间：',
-        'info.data_saved': '购票信息已暂存在系统',
-        'info.customer_service': '在线客服：',
-        'info.contact_service': '联系客服',
-        'queue.title': '您目前的排队状态',
-        'queue.people_ahead': '目前排队人数',
-        'queue.estimated_time': '预估等待时间',
-        'tips.title': '购票小提示',
-        'tips.tip1': '请勿重复开启多个窗口，这会使您的排队顺序后置',
-        'tips.tip2': '页面会自动刷新，请勿手动重新整理',
-        'tips.tip3': '成功进入选位页后，您将有10分钟的选位时间',
-        'notification.request': '开启桌面通知，当轮到您时会自动提醒',
-        'notification.enable': '开启通知',
-        'notification.your_turn': '轮到您了！',
-        'notification.your_turn_body': '请立即返回购票页面完成购票',
-        'network.online': '连线正常',
-        'network.offline': '连线中断',
-        'network.reconnecting': '重新连线中',
-        'network.offline_warning': '⚠️ 网络连线中断，正在尝试重新连线...',
-        'refresh_time_suffix': '秒后',
-        'minutes': '分钟'
+        'minutes': '分鐘',
+        'leave_warning': '確定要離開排隊嗎？離開後可能需要重新排隊。',
+        'footer.copyright': '拓元售票系統 TIXCRAFT'
     },
     'en': {
         'title': 'TIXCRAFT Ticketing System - Under Maintenance',
         'main.title': 'System Busy, Please Wait',
         'main.status': 'High traffic detected, system is processing requests',
-        'info.refresh_time': 'Auto refresh in: ',
         'info.data_saved': 'Ticket info saved in system',
         'info.customer_service': 'Customer Service: ',
         'info.contact_service': 'Contact Support',
@@ -75,13 +48,13 @@ const translations = {
         'network.offline': 'Offline',
         'network.reconnecting': 'Reconnecting',
         'network.offline_warning': '⚠️ Network connection lost, attempting to reconnect...',
-        'refresh_time_suffix': 's',
-        'minutes': 'min'
+        'minutes': 'min',
+        'leave_warning': 'Are you sure you want to leave the queue? You may need to queue again.',
+        'footer.copyright': 'TIXCRAFT Ticketing System'
     }
 };
 
 let currentLang = 'zh-TW';
-let countdownTime = 30;
 let isOnline = navigator.onLine;
 let progressValue = 0;
 
@@ -92,6 +65,33 @@ function switchLanguage(lang) {
 
     // 更新頁面標題
     document.title = translations[lang]['title'];
+
+    // 更新語言按鈕狀態
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    // 更新所有翻譯文本
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.dataset.i18n;
+        if (translations[lang] && translations[lang][key]) {
+            // 特殊處理包含動態內容的元素
+            if (key === 'info.customer_service') {
+                // 處理客服連結
+                const linkText = translations[lang]['info.contact_service'];
+                element.innerHTML = translations[lang][key] + `<a href="https://help.tixcraft.com/hc/zh-tw/requests/new" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+            } else {
+                // 一般文本直接替換
+                element.textContent = translations[lang][key];
+            }
+        }
+    });
+
+    // 更新網路狀態文字
+    updateNetworkStatusText();
+
+    // 更新排隊時間顯示
+    updateQueueDataWithCurrentLanguage();
 }
 
 // 數字滾動動畫
@@ -167,16 +167,23 @@ function updateNetworkStatus() {
     }
 }
 
-// 倒數計時功能
-function updateCountdown() {
-    const refreshTimeElement = document.getElementById('refresh-time');
-    if (refreshTimeElement) {
-        const suffix = translations[currentLang]['refresh_time_suffix'];
-        refreshTimeElement.textContent = countdownTime + suffix;
-        countdownTime--;
+// 單獨更新網路狀態文字（用於語言切換時）
+function updateNetworkStatusText() {
+    const text = document.getElementById('network-text');
+    const offlineWarning = document.getElementById('offline-warning');
 
-        if (countdownTime < 0) {
-            countdownTime = 30;
+    if (text) {
+        if (navigator.onLine) {
+            text.textContent = translations[currentLang]['network.online'];
+        } else {
+            text.textContent = translations[currentLang]['network.offline'];
+        }
+    }
+
+    if (offlineWarning) {
+        const warningSpan = offlineWarning.querySelector('span[data-i18n="network.offline_warning"]');
+        if (warningSpan) {
+            warningSpan.textContent = translations[currentLang]['network.offline_warning'];
         }
     }
 }
@@ -194,24 +201,57 @@ function updateQueueData() {
         animateNumber(queueCountElement, newCount.toLocaleString());
 
         let waitMinutes = Math.ceil(newCount / 300);
-        const minutesText = translations[currentLang]['minutes'];
-        animateNumber(waitTimeElement, waitMinutes + '-' + (waitMinutes + 5) + minutesText);
+        // 確保翻譯數據存在
+        if (translations[currentLang] && translations[currentLang]['minutes']) {
+            const minutesText = translations[currentLang]['minutes'];
+            animateNumber(waitTimeElement, waitMinutes + '-' + (waitMinutes + 5) + minutesText);
+        }
 
         // 當排隊人數很少時發送通知
         if (newCount < 500 && Notification.permission === 'granted') {
-            showNotification(
-                translations[currentLang]['notification.your_turn'],
-                translations[currentLang]['notification.your_turn_body']
-            );
+            if (translations[currentLang] && translations[currentLang]['notification.your_turn']) {
+                showNotification(
+                    translations[currentLang]['notification.your_turn'],
+                    translations[currentLang]['notification.your_turn_body']
+                );
+            }
         }
     }
 }
 
+// 更新排隊數據時使用當前語言（用於語言切換時立即更新）
+function updateQueueDataWithCurrentLanguage() {
+    const waitTimeElement = document.getElementById('wait-time');
+    if (waitTimeElement) {
+        const currentText = waitTimeElement.textContent;
+        const numbers = currentText.match(/\d+-\d+/);
+        if (numbers && translations[currentLang] && translations[currentLang]['minutes']) {
+            const minutesText = translations[currentLang]['minutes'];
+            waitTimeElement.textContent = numbers[0] + minutesText;
+        }
+    }
+}
+
+// 防止意外離開頁面
+function setupPageExitWarning() {
+    // 使用更簡單直接的方式
+    window.onbeforeunload = function(e) {
+        const warningMessage = translations[currentLang]['leave_warning'];
+        // 現代瀏覽器會忽略自定義訊息，但仍需要返回值來觸發對話框
+        return warningMessage;
+    };
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('頁面載入完成，開始初始化...');
+
     // 設置語言切換事件
     document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        console.log('綁定事件到按鈕:', btn.textContent, btn.dataset.lang);
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('點擊語言按鈕:', btn.dataset.lang, '按鈕文字:', btn.textContent);
             switchLanguage(btn.dataset.lang);
         });
     });
@@ -231,38 +271,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化網路狀態
     updateNetworkStatus();
 
-    // 初始化語言
+    // 初始化語言（確保正確設置初始狀態）
+    console.log('初始化語言:', currentLang);
     switchLanguage(currentLang);
+
+    // 設置防止意外離開 - 確保在最後設置
+    setupPageExitWarning();
+    console.log('防止離開功能已設置');
+
+    console.log('初始化完成');
 });
 
-// 設置定時器
-setInterval(updateCountdown, 1000);
+// 設置定時器（移除了刷新相關的定時器）
 setInterval(updateQueueData, 8000);
 setInterval(updateProgressBar, 3000);
-setInterval(updateNetworkStatus, 5000);新按鈕狀態
-document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-});
-
-// 更新所有翻譯文本
-document.querySelectorAll('[data-i18n]').forEach(element => {
-    const key = element.dataset.i18n;
-    if (translations[lang] && translations[lang][key]) {
-        if (element.innerHTML.includes('<')) {
-            // 處理包含HTML的元素
-            const htmlParts = element.innerHTML.split(/(<[^>]*>)/);
-            let translatedText = translations[lang][key];
-
-            if (key === 'info.customer_service') {
-                const linkText = translations[lang]['info.contact_service'];
-                translatedText = translatedText + `<a href="https://help.tixcraft.com/hc/zh-tw/requests/new" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
-            }
-
-            element.innerHTML = translatedText;
-        } else {
-            element.textContent = translations[lang][key];
-        }
-    }
-});
-
-// 更
+setInterval(updateNetworkStatus, 5000);

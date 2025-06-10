@@ -10,8 +10,7 @@
 <body>
 <!-- 語言切換按鈕 -->
 <div class="language-switcher">
-    <button class="lang-btn active" data-lang="zh-TW">繁中</button>
-    <button class="lang-btn" data-lang="zh-CN">简中</button>
+    <button class="lang-btn active" data-lang="zh-TW">中文</button>
     <button class="lang-btn" data-lang="en">EN</button>
 </div>
 
@@ -50,18 +49,15 @@
                 <span data-i18n="notification.request">開啟桌面通知，當輪到您時會自動提醒</span>
                 <button onclick="requestNotificationPermission()" data-i18n="notification.enable">開啟通知</button>
             </div>
+
             <div class="info-container">
-                <div class="info-box">
-                    <i class="fas fa-clock"></i>
-                    <p data-i18n="info.refresh_time">自動刷新時間：<span id="refresh-time">30秒後</span></p>
-                </div>
                 <div class="info-box">
                     <i class="fas fa-shield-alt"></i>
                     <p data-i18n="info.data_saved">購票資訊已暫存在系統</p>
                 </div>
                 <div class="info-box">
                     <i class="fas fa-headset"></i>
-                    <p data-i18n="info.customer_service">線上客服：<a href="https://help.tixcraft.com/hc/zh-tw/requests/new" target="_blank" rel="noopener noreferrer" data-i18n="info.contact_service">聯絡客服</a></p>
+                    <p data-i18n="info.customer_service">線上客服：<a href="https://help.tixcraft.com/hc/zh-tw/requests/new" target="_blank" rel="noopener noreferrer">聯絡客服</a></p>
                 </div>
             </div>
 
@@ -96,7 +92,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 拓元售票系統 TIXCRAFT</p>
+        <p data-i18n="footer.copyright">&copy; 2025 拓元售票系統 TIXCRAFT</p>
         <div class="social-links">
             <a href="https://www.facebook.com/tixcraftservice/?locale=zh_TW" target="_blank" rel="noopener noreferrer" title="Facebook 官方粉絲專頁"><i class="fab fa-facebook"></i></a>
             <a href="https://www.instagram.com/tixcraft/" target="_blank" rel="noopener noreferrer" title="Instagram 官方帳號"><i class="fab fa-instagram"></i></a>
