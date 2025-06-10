@@ -44,9 +44,9 @@
 }
 
 :root {
-    --primary-color: #e81c4f; /* 拓元紅色 */
+    --primary-color: #0078d7; /* TIXCRAFT藍色 */
     --secondary-color: #222222; /* 拓元黑色 */
-    --accent-color: #f8c23e; /* 拓元黃色強調 */
+    --accent-color: #40a9ff; /* 淺藍色強調 */
     --light-gray: #f5f5f5;
     --mid-gray: #e0e0e0;
     --dark-gray: #333333;
@@ -204,7 +204,7 @@ body {
 }
 
 .refresh-warning-btn.confirm:hover {
-    background: #d01847;
+    background: #005a9e;
 }
 
 .refresh-warning-btn.cancel {
@@ -259,7 +259,7 @@ body {
 /* 通知樣式 */
 .notification-permission {
     background: var(--accent-color);
-    color: var(--secondary-color);
+    color: white;
     padding: 10px 15px;
     border-radius: 5px;
     margin: 10px 0;
@@ -481,7 +481,7 @@ h1 {
 .queue-number i, .estimated-time i {
     font-size: 30px;
     color: var(--primary-color);
-    background-color: rgba(232, 28, 79, 0.1);
+    background-color: rgba(0, 120, 215, 0.1);
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -504,7 +504,7 @@ h1 {
 
 /* 購票提示區 */
 .tips-container {
-    background-color: rgba(248, 194, 62, 0.1);
+    background-color: rgba(64, 169, 255, 0.1);
     border-left: 4px solid var(--accent-color);
     padding: 20px;
     border-radius: 5px;
