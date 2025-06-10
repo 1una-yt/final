@@ -3,53 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TixCraft</title>
-    <link rel="stylesheet" href="style.css">
+    <title data-i18n="title">拓元售票系統 - 系統維護中</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+<!-- 語言切換按鈕 -->
+<div class="language-switcher">
+    <button class="lang-btn active" data-lang="zh-TW">繁中</button>
+    <button class="lang-btn" data-lang="zh-CN">简中</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+</div>
+
+<!-- 網路狀態指示器 -->
+<div class="network-status">
+    <div class="network-indicator" id="network-indicator"></div>
+    <span id="network-text" data-i18n="network.online">連線正常</span>
+</div>
+
+<!-- 離線警告 -->
+<div class="offline-warning" id="offline-warning">
+    <span data-i18n="network.offline_warning">⚠️ 網路連線中斷，正在嘗試重新連線...</span>
+</div>
+
 <div class="container">
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <!-- Logo -->
-            <div class="logo">
-                <img src="images.jpg" alt="TixCraft Logo" class="logo-img">
-            </div>
-
-            <!-- Top Right Controls -->
-            <div class="top-controls">
-                <div class="member-info">
-                    <span class="member-text">會員登入</span>
-                    <span class="member-status">登出</span>
-                    <div class="notification-badge">6</div>
-                </div>
-                <div class="language-toggle">
-                    <span>繁體中文 English</span>
-                </div>
-            </div>
+    <header>
+        <div class="logo">
+            <img src="https://d1.awsstatic.com/Startups/partner%20logos/logos/(final)%E6%8B%93%E5%85%83logo(C-%E7%84%A1%E7%B6%B2%E5%9D%80).29aac2c991fb6c61d89ee66eb0da4c006b1f2495.gif" alt="拓元售票系統標誌">
         </div>
-
-        <!-- Navigation -->
-        <nav class="navigation">
-            <ul class="nav-list">
-                <li><a href="#" class="nav-link">首頁</a></li>
-                <li><a href="#" class="nav-link">活動查詢</a></li>
-                <li><a href="#" class="nav-link">業務洽詢</a></li>
-                <li><a href="#" class="nav-link">常見問題</a></li>
-            </ul>
-            <div class="search-section">
-                <span class="search-text">會員帳號 訂購查詢</span>
-            </div>
-        </nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="loading-section">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">請稍候，正在處理您行程內容</p>
+    <main>
+        <div class="maintenance-card">
+            <div class="icon-container">
+                <i class="fas fa-ticket-alt maintenance-icon"></i>
+            </div>
+            <h1 data-i18n="main.title">系統繁忙中，請稍候重試</h1>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p class="status-message" data-i18n="main.status">目前有大量用戶同時訪問，系統正在全力處理請求</p>
+
+            <!-- 通知權限請求 -->
+            <div class="notification-permission" id="notification-permission">
+                <i class="fas fa-bell"></i>
+                <span data-i18n="notification.request">開啟桌面通知，當輪到您時會自動提醒</span>
+                <button onclick="requestNotificationPermission()" data-i18n="notification.enable">開啟通知</button>
+            </div>
+            <div class="info-container">
+                <div class="info-box">
+                    <i class="fas fa-clock"></i>
+                    <p data-i18n="info.refresh_time">自動刷新時間：<span id="refresh-time">30秒後</span></p>
+                </div>
+                <div class="info-box">
+                    <i class="fas fa-shield-alt"></i>
+                    <p data-i18n="info.data_saved">購票資訊已暫存在系統</p>
+                </div>
+                <div class="info-box">
+                    <i class="fas fa-headset"></i>
+                    <p data-i18n="info.customer_service">線上客服：<a href="https://help.tixcraft.com/hc/zh-tw/requests/new" target="_blank" rel="noopener noreferrer" data-i18n="info.contact_service">聯絡客服</a></p>
+                </div>
+            </div>
+
+            <div class="queue-status">
+                <h2 data-i18n="queue.title">您目前的排隊狀態</h2>
+                <div class="queue-info">
+                    <div class="queue-number">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <p data-i18n="queue.people_ahead">目前排隊人數</p>
+                            <span class="number" id="queue-count">4,328</span>
+                        </div>
+                    </div>
+                    <div class="estimated-time">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div>
+                            <p data-i18n="queue.estimated_time">預估等待時間</p>
+                            <span class="number" id="wait-time">15-20分鐘</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tips-container">
+                    <h3><i class="fas fa-lightbulb"></i> <span data-i18n="tips.title">購票小提示</span></h3>
+                    <ul>
+                        <li data-i18n="tips.tip1">請勿重複開啟多個視窗，這會使您的排隊順序後置</li>
+                        <li data-i18n="tips.tip2">頁面會自動刷新，請勿手動重新整理</li>
+                        <li data-i18n="tips.tip3">成功進入選位頁後，您將有10分鐘的選位時間</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </main>
+
+    <footer>
+        <p>&copy; 2025 拓元售票系統 TIXCRAFT</p>
+        <div class="social-links">
+            <a href="https://www.facebook.com/tixcraftservice/?locale=zh_TW" target="_blank" rel="noopener noreferrer" title="Facebook 官方粉絲專頁"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/tixcraft/" target="_blank" rel="noopener noreferrer" title="Instagram 官方帳號"><i class="fab fa-instagram"></i></a>
+            <a href="https://spot.line.me/detail/748232061805927555" target="_blank" rel="noopener noreferrer" title="LINE 官方帳號"><i class="fab fa-line"></i></a>
+            <a href="https://www.youtube.com/@tixcraft" target="_blank" rel="noopener noreferrer" title="YouTube 官方頻道"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
 </div>
+
+<script src="script.js"></script>
 </body>
 </html>
