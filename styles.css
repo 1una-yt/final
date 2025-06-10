@@ -1,0 +1,221 @@
+/* 基礎重置和通用樣式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    min-height: 100vh;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Header 樣式 */
+.header {
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Logo 樣式 */
+.logo-img {
+    height: 50px;
+    width: auto;
+    max-width: 200px;
+}
+
+/* 右上角控制區 */
+.top-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.member-text {
+    color: #666;
+    font-size: 14px;
+}
+
+.member-status {
+    color: #666;
+    font-size: 14px;
+}
+
+.notification-badge {
+    background-color: #ff4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.language-toggle {
+    color: #666;
+    font-size: 14px;
+}
+
+/* 導航樣式 */
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background-color: #fff;
+    border-bottom: 2px solid #4a90e2;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    gap: 0;
+}
+
+.nav-list li {
+    border-right: 1px solid #e0e0e0;
+}
+
+.nav-list li:last-child {
+    border-right: none;
+}
+
+.nav-link {
+    display: block;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: #f0f8ff;
+    color: #4a90e2;
+}
+
+.search-section {
+    padding: 15px 0;
+}
+
+.search-text {
+    color: #4a90e2;
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* 主要內容區 */
+.main-content {
+    padding: 60px 20px;
+    text-align: center;
+    background-color: #fafafa;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* 加載動畫 */
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #e0e0e0;
+    border-top: 6px solid #4a90e2;
+    border-right: 6px solid #4a90e2;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #666;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .navigation {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .nav-list {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-list li {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .nav-link {
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .main-content {
+        padding: 40px 10px;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border-width: 5px;
+    }
+
+    .loading-text {
+        font-size: 14px;
+    }
+}
