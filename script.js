@@ -23,7 +23,7 @@ const translations = {
         'network.reconnecting': '重新連線中',
         'network.offline_warning': '⚠️ 網路連線中斷，正在嘗試重新連線...',
         'minutes': '分鐘',
-        'leave_warning': '確定要離開排隊嗎？離開後可能需要重新排隊。',
+        'leave_warning': '⚠️ 警告：手動刷新將會失去您的排隊位置！\n建議您耐心等待，系統會自動為您處理排隊狀態。',
         'footer.copyright': '拓元售票系統 TIXCRAFT'
     },
     'en': {
@@ -49,7 +49,7 @@ const translations = {
         'network.reconnecting': 'Reconnecting',
         'network.offline_warning': '⚠️ Network connection lost, attempting to reconnect...',
         'minutes': 'min',
-        'leave_warning': 'Are you sure you want to leave the queue? You may need to queue again.',
+        'leave_warning': '⚠️ Warning: Manual refresh will cause you to lose your queue position!\nWe recommend waiting patiently as the system will automatically handle your queue status.',
         'footer.copyright': 'TIXCRAFT Ticketing System'
     }
 };
@@ -234,12 +234,92 @@ function updateQueueDataWithCurrentLanguage() {
 
 // 防止意外離開頁面
 function setupPageExitWarning() {
-    // 使用更簡單直接的方式
-    window.onbeforeunload = function(e) {
-        const warningMessage = translations[currentLang]['leave_warning'];
-        // 現代瀏覽器會忽略自定義訊息，但仍需要返回值來觸發對話框
-        return warningMessage;
+    // 攔截所有離開/刷新事件（包括瀏覽器刷新按鈕）
+    window.addEventListener('beforeunload', function(e) {
+        // 現代瀏覽器會忽略自訂訊息，但這會觸發通用警告
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+    });
+
+    // 攔截F5和Ctrl+R刷新 - 顯示自訂警告
+    document.addEventListener('keydown', function(e) {
+        console.log('按鍵事件:', e.key, e.ctrlKey, e.metaKey); // 調試用
+
+        // F5鍵
+        if (e.key === 'F5') {
+            console.log('攔截到F5按鍵'); // 調試用
+            e.preventDefault();
+            e.stopPropagation();
+            showCustomRefreshWarning();
+            return false;
+        }
+
+        // Ctrl+R 或 Cmd+R
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R')) {
+            console.log('攔截到Ctrl+R或Cmd+R'); // 調試用
+            e.preventDefault();
+            e.stopPropagation();
+            showCustomRefreshWarning();
+            return false;
+        }
+    }, true); // 使用捕獲階段確保優先處理
+
+    console.log('刷新警告功能已設置');
+}
+
+// 顯示自訂刷新警告
+function showCustomRefreshWarning() {
+    // 創建自訂警告彈窗
+    const modal = document.createElement('div');
+    modal.className = 'refresh-warning-modal';
+
+    const alertBox = document.createElement('div');
+    alertBox.className = 'refresh-warning-box';
+
+    const warningMessage = translations[currentLang]['leave_warning'];
+    const confirmText = currentLang === 'zh-TW' ? '確定刷新' : 'Confirm Refresh';
+    const cancelText = currentLang === 'zh-TW' ? '取消' : 'Cancel';
+    const titleText = currentLang === 'zh-TW' ? '刷新警告' : 'Refresh Warning';
+
+    alertBox.innerHTML = `
+        <div class="refresh-warning-icon">⚠️</div>
+        <h2 class="refresh-warning-title">${titleText}</h2>
+        <p class="refresh-warning-message">${warningMessage}</p>
+        <div class="refresh-warning-buttons">
+            <button class="refresh-warning-btn confirm" id="confirmRefresh">${confirmText}</button>
+            <button class="refresh-warning-btn cancel" id="cancelRefresh">${cancelText}</button>
+        </div>
+    `;
+
+    modal.appendChild(alertBox);
+    document.body.appendChild(modal);
+
+    // 綁定按鈕事件
+    document.getElementById('confirmRefresh').onclick = function() {
+        document.body.removeChild(modal);
+        window.location.reload();
     };
+
+    document.getElementById('cancelRefresh').onclick = function() {
+        document.body.removeChild(modal);
+    };
+
+    // 點擊背景關閉
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    };
+
+    // ESC鍵關閉
+    const escHandler = function(e) {
+        if (e.key === 'Escape') {
+            document.body.removeChild(modal);
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
 }
 
 // 初始化
